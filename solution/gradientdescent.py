@@ -57,9 +57,9 @@ def train_regularize(X, y, lamda, vocab_size):
     last_loss = 0
 
     # while True:
-    for l in range(200000):
+    for l in range(100000):
         # ita = 1/float(l+1)
-        ita = 0.01
+        ita = 0.001
         j = randint(0, n-1)
         x = X[j]
         sumation = 0
@@ -69,8 +69,8 @@ def train_regularize(X, y, lamda, vocab_size):
 
         if sumation*y[j] <= 1:
             for k in range(d):
-                theta[k] += y[j]*x.get(k,0)*ita
-            theta0 += y[j]*ita
+                theta[k] = (1-2*lamda*ita)*theta[k] + y[j]*x.get(k,0)*ita
+            theta0 = (1-2*lamda*ita)*theta0 + y[j]*ita
 
         if l % 1000 == 0:
             print l, 'loss: ', loss(X, y, theta, theta0, vocab_size)
@@ -81,7 +81,7 @@ def train_regularize(X, y, lamda, vocab_size):
                 best_theta0 = theta0
                 best_loss = lo
         
-            if last_loss == lo:
+            if last_loss - lo < 0.01 and last_loss - lo > 0:
                 break
                 
         last_loss = lo
