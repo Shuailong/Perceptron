@@ -17,6 +17,7 @@ import pickle
 
 import perceptron
 import gradientdescent
+from random import shuffle
 
 
 def predict(theta, theta0, X_test, vocab_size):
@@ -219,13 +220,18 @@ def multiclassify():
     print str(len(science_train)) + ' science_train tuples;'
     print str(len(science_test)) + ' science_test tuples.'
 
-    # encoding: atheism = 1, sports = 2, politics = 3, science = 4
-    # assume atheism = 1, others = -1
-    X = atheism_train + sports_train + politics_train + science_train
-    y = [1]*len(atheism_train) + [-1]*(len(sports_train) + len(politics_train) + len(science_train))
-
+    train = gradientdescent.train
+    
     print 'Start training atheism vs others...'
-    train = perceptron.train
+    # assume atheism = 1, others = -1
+    # X = atheism_train + sports_train + politics_train + science_train
+    # y = [1]*len(atheism_train) + [-1]*(len(sports_train) + len(politics_train) + len(science_train)) 
+    # random pick len(atheism_train) data from -1 labelled data to void skewed data
+    shuffle(sports_train)
+    shuffle(politics_train)
+    shuffle(science_train)
+    X = atheism_train + sports_train[:len(sports_train)/3] + politics_train[:len(politics_train)/3] + science_train[:len(science_train)/3]
+    y = [1]*len(atheism_train) + [-1]*(len(sports_train)/3+len(politics_train)/3+len(science_train)/3)
     if os.path.isfile('atheism_vs_others.p'):
         theta_atheism, theta0_atheism = pickle.load(open('atheism_vs_others.p', 'rb'))
     else:
@@ -234,8 +240,13 @@ def multiclassify():
     print 'Training atheism vs others ended.'
 
     print 'Start training politics vs others...'
-    X = politics_train + sports_train + atheism_train + science_train
-    y = [1]*len(politics_train) + [-1]*(len(sports_train) + len(atheism_train) + len(science_train))
+    # X = politics_train + sports_train + atheism_train + science_train
+    # y = [1]*len(politics_train) + [-1]*(len(sports_train) + len(atheism_train) + len(science_train))
+    shuffle(sports_train)
+    shuffle(atheism_train)
+    shuffle(science_train)
+    X = politics_train + sports_train[:len(sports_train)/3] + atheism_train[:len(atheism_train)/3] + science_train[:len(science_train)/3]
+    y = [1]*len(politics_train) + [-1]*(len(sports_train)/3+len(atheism_train)/3+len(science_train)/3)
     if os.path.isfile('politics_vs_others.p'):
         theta_politics, theta0_politics = pickle.load(open('politics_vs_others.p', 'rb'))
     else:
@@ -244,8 +255,13 @@ def multiclassify():
     print 'Training politics vs others ended.'
 
     print 'Start training sports vs others...'
-    X = science_train + sports_train + atheism_train + politics_train
-    y = [1]*len(science_train) + [-1]*(len(sports_train) + len(atheism_train) + len(politics_train))
+    # X = science_train + sports_train + atheism_train + politics_train
+    # y = [1]*len(science_train) + [-1]*(len(sports_train) + len(atheism_train) + len(politics_train))
+    shuffle(sports_train)
+    shuffle(atheism_train)
+    shuffle(politics_train)
+    X = science_train + sports_train[:len(sports_train)/3] + atheism_train[:len(atheism_train)/3] + politics_train[:len(politics_train)/3]
+    y = [1]*len(science_train) + [-1]*(len(sports_train)/3+len(atheism_train)/3+len(politics_train)/3)
     if os.path.isfile('science_vs_others.p'):
         theta_science, theta0_science = pickle.load(open('science_vs_others.p', 'rb'))
     else:
@@ -254,8 +270,13 @@ def multiclassify():
     print 'Training science vs others ended.'
 
     print 'Start training science vs others...'
-    X = sports_train + science_train + atheism_train + politics_train
-    y = [1]*len(sports_train) + [-1]*(len(science_train) + len(atheism_train) + len(politics_train))    
+    # X = sports_train + science_train + atheism_train + politics_train
+    # y = [1]*len(sports_train) + [-1]*(len(science_train) + len(atheism_train) + len(politics_train))  
+    shuffle(science_train)
+    shuffle(atheism_train)
+    shuffle(politics_train)
+    X = sports_train + science_train[:len(science_train)/3] + atheism_train[:len(atheism_train)/3] + politics_train[:len(politics_train)/3]
+    y = [1]*len(sports_train) + [-1]*(len(science_train)/3+len(atheism_train)/3+len(politics_train)/3)  
     if os.path.isfile('sports_vs_others.p'):
         theta_sports, theta0_sports = pickle.load(open('sports_vs_others.p', 'rb'))
     else:
@@ -265,6 +286,7 @@ def multiclassify():
 
     print 'Start predicting...'
     
+    # encoding: atheism = 1, sports = 2, politics = 3, science = 4
     X_train = atheism_train + sports_train + politics_train + science_train
     y_train = [1]*len(atheism_train) + [2]*len(sports_train) + [3]*len(politics_train) + [4]*len(science_train)
     

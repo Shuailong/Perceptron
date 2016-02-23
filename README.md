@@ -10,10 +10,10 @@ Classify news articles into four categories.
 -----
 
 ## TODO:
-- tf-idf
-- feature normalization
+- tf-idf[✔]
+- feature normalization[✔]
 - bigrams
 - topic model
 - parse tree
 - word embeddings
-- multiclassfication: skewed data
+- multiclassfication: skewed data[✔]

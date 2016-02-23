@@ -55,10 +55,10 @@ def train(X, y, vocab_size):
         if count == 0:
             break
 
-    # for k in range(len(theta)):
-    #     theta[k] -= u[k]/float(c)
+    for k in range(len(theta)):
+        theta[k] -= u[k]/float(c)
 
-    # theta0 -= beta/float(c)
+    theta0 -= beta/float(c)
 
     return (theta, theta0)
     
