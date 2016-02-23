@@ -109,9 +109,9 @@ def train(X, y, vocab_size):
     last_loss = 0
 
     # while True:
-    for l in range(200000):
+    for l in range(20000):
         # ita = 1/float(l+1)
-        ita = 0.01
+        ita = 0.001
         j = randint(0, n-1)
         x = X[j]
         sumation = 0

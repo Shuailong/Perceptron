@@ -17,3 +17,5 @@ Classify news articles into four categories.
 - parse tree
 - word embeddings
 - multiclassfication: skewed data[✔]
+
+[Experiment result](https://goo.gl/YV9fHt)
