@@ -7,6 +7,8 @@ Classify news articles into four categories.
 - Stochastic Gradient Descent(with regularization)
 - Multiclass classfication
 
+[Experiment result](https://goo.gl/YV9fHt)
+
 -----
 
 ## TODO:
@@ -18,4 +20,3 @@ Classify news articles into four categories.
 - word embeddings
 - multiclassfication: skewed data[✔]
 
-[Experiment result](https://goo.gl/YV9fHt)
