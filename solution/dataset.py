@@ -15,29 +15,35 @@ import nltk
 from nltk.corpus import stopwords
 from collections import Counter
 import pickle
+from math import log
 
 BASE_PATH = '../data'
+UNKNOWN_NOTATION = 'UNK'
 
 def get_vocab():
     '''
-    :return: whole vocabulary in whole training set
-    :rtype: List of Str
+    :return: inverse document frequency(idf)
+    :rtype: dict
     '''
     #try to get from pickle dump
-    if os.path.isfile('vocab.p'):
-        vocab = pickle.load(open('vocab.p', 'rb'))
-        return vocab
+    if os.path.isfile('idf.p'):
+        idf = pickle.load(open('idf.p', 'rb'))
+        return idf
 
-    vocab = []
+    idf = {}
+
+    D = 0 # total number of documents
 
     data_sets = ['train/atheism', 'train/politics', 'train/science', 'train/sports']
     
     stops = set(stopwords.words('english'))
 
+    vocab = []
     for data_set in data_sets:
         root = os.path.join(BASE_PATH, data_set)
         for file in os.listdir(root):
             file_dir = os.path.join(root, file)
+            D += 1
             with open(file_dir) as f:
                 content = f.read()
             # tokenization
@@ -55,16 +61,17 @@ def get_vocab():
     
     #remove low freq. word and add 'unkown' word
     freq = Counter(vocab)
-    vocab_romove_low = set()
+    freq[UNKNOWN_NOTATION] = 0
     for word in freq:
         if freq[word] > 1:
-            vocab_romove_low.add(word)
+            idf[word] = log(D/float(freq[word]))
+        else:
+            freq[UNKNOWN_NOTATION] += freq[word]
+    idf[UNKNOWN_NOTATION] = log(D/float(freq[UNKNOWN_NOTATION]))
     
-    vocab_romove_low = list(vocab_romove_low)
-    vocab_romove_low.append('UNK') 
-    pickle.dump(vocab_romove_low, open('vocab.p', 'wb'))
+    pickle.dump(idf, open('idf.p', 'wb'))
 
-    return vocab_romove_low
+    return idf
 
 def article2vec(content):
     """
@@ -73,6 +80,8 @@ def article2vec(content):
     :return: the feature vector extracted from an article str.
     :rtype: List
     """
+    idf = get_vocab()
+    vocab = idf.keys()
     words = []
     try:
         words = nltk.word_tokenize(content)
@@ -83,17 +92,25 @@ def article2vec(content):
     # remove stop words
     words = [word.lower() for word in words if word not in stops]
     freq = Counter(words)
-    feature = {}
+    tf = {} # term frequency
     known_words = []
     for i in range(len(vocab)):
         if freq.get(vocab[i], 0) != 0:
             known_words.append(vocab[i])
-            feature[i] = freq[vocab[i]]
+            tf[vocab[i]] = 1 + log(freq[vocab[i]])
+            
     unkown_words = []
     for word in freq:
         if word not in known_words:
             unkown_words.append(word)
-    feature[len(vocab)-1] = len(unkown_words)
+    if len(unkown_words) > 0:
+        tf[UNKNOWN_NOTATION] = 1 + log(len(unkown_words))
+
+    feature = {}
+    for i in range(len(vocab)):
+        tfidf = tf.get(vocab[i],0) * idf.get(vocab[i], 0)
+        if tfidf != 0:
+            feature[i] = tfidf
 
     return feature
 
@@ -276,8 +293,6 @@ def get_sports_test_data():
     pickle.dump(data, open('sports_test.p', 'wb'))
 
     return data
-
-vocab = get_vocab()
 
 def main():
     # print get_vocab()
