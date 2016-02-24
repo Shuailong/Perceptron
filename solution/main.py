@@ -102,6 +102,7 @@ def multiscore(predict, true):
 
 # part(2,3)
 def binary_classify():
+    print 'Building vocabulary...'
     vocab = dataset.get_vocab().keys()
     vocab_size = len(vocab)
     
@@ -123,20 +124,20 @@ def binary_classify():
     print 'Start training...'
 
     # choose train model
-    # train = perceptron.train
-    # if os.path.isfile('perceptron_model.p'):
-    #     theta, theta0 = pickle.load(open('perceptron_model.p', 'rb'))
-    # else:
-    #     theta, theta0 = train(X, y, vocab_size)
-    #     pickle.dump((theta, theta0), open('perceptron_model.p', 'wb'))
-
-    train = gradientdescent.train
-    if os.path.isfile('gradient_model.p'):
-        theta, theta0 = pickle.load(open('gradient_model.p', 'rb'))
+    train = perceptron.train_averaged
+    if os.path.isfile('perceptron_model.p'):
+        theta, theta0 = pickle.load(open('perceptron_model.p', 'rb'))
     else:
         theta, theta0 = train(X, y, vocab_size)
-        pickle.dump((theta, theta0), open('gradient_model.p', 'wb'))
-    print 'Training ended.'
+        pickle.dump((theta, theta0), open('perceptron_model.p', 'wb'))
+
+    # train = gradientdescent.train
+    # if os.path.isfile('gradient_model.p'):
+    #     theta, theta0 = pickle.load(open('gradient_model.p', 'rb'))
+    # else:
+    #     theta, theta0 = train(X, y, vocab_size)
+    #     pickle.dump((theta, theta0), open('gradient_model.p', 'wb'))
+    # print 'Training ended.'
 
     X_test = atheism_test + sports_test
     y_test = [-1]*len(atheism_test) + [1]*len(sports_test)
@@ -307,9 +308,9 @@ def multiclassify():
 def main():
     start_time = time.time()
 
-    # binary_classify()
+    binary_classify()
     # multiclassify()
-    binary_classify_regularize()
+    # binary_classify_regularize()
 
     print '----------' + str(round(time.time() - start_time, 2)) + ' seconds.----------'
 

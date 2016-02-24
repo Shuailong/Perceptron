@@ -17,8 +17,12 @@ from collections import Counter
 import pickle
 from math import log
 
+import featureextractor
+
+
 BASE_PATH = '../data'
 UNKNOWN_NOTATION = 'UNK'
+get_feature = featureextractor.BoW
 
 def get_vocab():
     '''
@@ -73,46 +77,6 @@ def get_vocab():
 
     return idf
 
-def article2vec(content):
-    """
-    :content: an article
-    :type str: string
-    :return: the feature vector extracted from an article str.
-    :rtype: List
-    """
-    idf = get_vocab()
-    vocab = idf.keys()
-    words = []
-    try:
-        words = nltk.word_tokenize(content)
-    except Exception, e:
-        pass
-
-    stops = set(stopwords.words('english'))
-    # remove stop words
-    words = [word.lower() for word in words if word not in stops]
-    freq = Counter(words)
-    tf = {} # term frequency
-    known_words = []
-    for i in range(len(vocab)):
-        if freq.get(vocab[i], 0) != 0:
-            known_words.append(vocab[i])
-            tf[vocab[i]] = 1 + log(freq[vocab[i]])
-            
-    unkown_words = []
-    for word in freq:
-        if word not in known_words:
-            unkown_words.append(word)
-    if len(unkown_words) > 0:
-        tf[UNKNOWN_NOTATION] = 1 + log(len(unkown_words))
-
-    feature = {}
-    for i in range(len(vocab)):
-        tfidf = tf.get(vocab[i],0) * idf.get(vocab[i], 0)
-        if tfidf != 0:
-            feature[i] = tfidf
-
-    return feature
 
 def get_atheism_train_data():
     """
@@ -130,7 +94,7 @@ def get_atheism_train_data():
         file_dir = os.path.join(root, file)
         with open(file_dir) as f:
             content = f.read()
-        feature = article2vec(content)
+        feature = get_feature(content)
         data.append(feature)
 
     pickle.dump(data, open('atheism_train.p', 'wb'))
@@ -152,7 +116,7 @@ def get_politics_train_data():
         file_dir = os.path.join(root, file)
         with open(file_dir) as f:
             content = f.read()
-        feature = article2vec(content)
+        feature = get_feature(content)
         data.append(feature)
 
     pickle.dump(data, open('politics_train.p', 'wb'))
@@ -173,7 +137,7 @@ def get_science_train_data():
         file_dir = os.path.join(root, file)
         with open(file_dir) as f:
             content = f.read()
-        feature = article2vec(content)
+        feature = get_feature(content)
         data.append(feature)
 
     pickle.dump(data, open('science_train.p', 'wb'))
@@ -196,7 +160,7 @@ def get_sports_train_data():
         file_dir = os.path.join(root, file)
         with open(file_dir) as f:
             content = f.read()
-        feature = article2vec(content)
+        feature = get_feature(content)
         data.append(feature)
 
     pickle.dump(data, open('sports_train.p', 'wb'))
@@ -220,7 +184,7 @@ def get_atheism_test_data():
         file_dir = os.path.join(root, file)
         with open(file_dir) as f:
             content = f.read()
-        feature = article2vec(content)
+        feature = get_feature(content)
         data.append(feature)
 
     pickle.dump(data, open('atheism_test.p', 'wb'))
@@ -242,7 +206,7 @@ def get_politics_test_data():
         file_dir = os.path.join(root, file)
         with open(file_dir) as f:
             content = f.read()
-        feature = article2vec(content)
+        feature = get_feature(content)
         data.append(feature)
 
     pickle.dump(data, open('politics_test.p', 'wb'))
@@ -264,7 +228,7 @@ def get_science_test_data():
         file_dir = os.path.join(root, file)
         with open(file_dir) as f:
             content = f.read()
-        feature = article2vec(content)
+        feature = get_feature(content)
         data.append(feature)
 
     pickle.dump(data, open('science_test.p', 'wb'))
@@ -287,7 +251,7 @@ def get_sports_test_data():
         file_dir = os.path.join(root, file)
         with open(file_dir) as f:
             content = f.read()
-        feature = article2vec(content)
+        feature = get_feature(content)
         data.append(feature)
         
     pickle.dump(data, open('sports_test.p', 'wb'))
