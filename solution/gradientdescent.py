@@ -37,7 +37,7 @@ def loss(X, y, theta, theta0, vocab_size):
     return loss/float(n)
 
 # part (5)
-def train_regularize(X, y, lamda, vocab_size):
+def train_regularize(X, y, lamda, ita, vocab_size):
     '''
     Gradient Descent training with regularization term
     X: Feature vectors
@@ -59,7 +59,7 @@ def train_regularize(X, y, lamda, vocab_size):
     # while True:
     for l in range(100000):
         # ita = 1/float(l+1)
-        ita = 0.001
+        # ita = 0.001
         j = randint(0, n-1)
         x = X[j]
         sumation = 0
@@ -81,7 +81,7 @@ def train_regularize(X, y, lamda, vocab_size):
                 best_theta0 = theta0
                 best_loss = lo
         
-            if last_loss - lo < 0.01 and last_loss - lo > 0:
+            if last_loss - lo < 0.01 and last_loss - lo >= 0:
                 break
                 
         last_loss = lo
@@ -89,7 +89,7 @@ def train_regularize(X, y, lamda, vocab_size):
     return (theta, theta0)
 
 # part (3)
-def train(X, y, vocab_size):
+def train(X, y, ita, vocab_size):
     '''
     Gradient Descent training
     X: Feature vectors
@@ -109,9 +109,9 @@ def train(X, y, vocab_size):
     last_loss = 0
 
     # while True:
-    for l in range(20000):
+    for l in range(100000):
         # ita = 1/float(l+1)
-        ita = 0.001
+        # ita = 0.001
         j = randint(0, n-1)
         x = X[j]
         sumation = 0

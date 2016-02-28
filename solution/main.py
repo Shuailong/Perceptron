@@ -124,20 +124,18 @@ def binary_classify():
     print 'Start training...'
 
     # choose train model
-    train = perceptron.train_averaged
+    train = perceptron.train
     if os.path.isfile('perceptron_model.p'):
         theta, theta0 = pickle.load(open('perceptron_model.p', 'rb'))
     else:
         theta, theta0 = train(X, y, vocab_size)
         pickle.dump((theta, theta0), open('perceptron_model.p', 'wb'))
 
-    # train = gradientdescent.train
-    # if os.path.isfile('gradient_model.p'):
-    #     theta, theta0 = pickle.load(open('gradient_model.p', 'rb'))
-    # else:
-    #     theta, theta0 = train(X, y, vocab_size)
-    #     pickle.dump((theta, theta0), open('gradient_model.p', 'wb'))
-    # print 'Training ended.'
+    # itas = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]
+    # for ita in itas:
+        # train = gradientdescent.train
+        # theta, theta0 = train(X, y, ita, vocab_size)
+    print 'Training ended.'
 
     X_test = atheism_test + sports_test
     y_test = [-1]*len(atheism_test) + [1]*len(sports_test)
@@ -148,7 +146,7 @@ def binary_classify():
     predict_test = predict(theta, theta0, X_test, vocab_size)
     score_test = score(predict_test, y_test)
     print 'Predicting ended.'
-
+    # print 'ita: ', ita
     print 'Train: ', str(round(score_train*100, 2)) + '%'
     print 'Test: ', str(round(score_test*100, 2)) + '%'
 
@@ -176,9 +174,10 @@ def binary_classify_regularize():
 
     train = gradientdescent.train_regularize
     lambdas = [0.001, 0.01, 0.1, 1, 10]
+    ita = 0.001
     for lamda in lambdas:
         print 'Lambda: ', lamda
-        theta, theta0 = train(X, y, lamda, vocab_size)
+        theta, theta0 = train(X, y, lamda, ita, vocab_size)
         pickle.dump((theta, theta0), open('gradient_regularize_model.p', 'wb'))
         print 'Training ended.'
 
@@ -221,9 +220,12 @@ def multiclassify():
     print str(len(science_train)) + ' science_train tuples;'
     print str(len(science_test)) + ' science_test tuples.'
 
-    train = gradientdescent.train
-    
+    train = gradientdescent.train_regularize
+    ita = 0.001
+    lamda = 0.001
+
     print 'Start training atheism vs others...'
+
     # assume atheism = 1, others = -1
     # X = atheism_train + sports_train + politics_train + science_train
     # y = [1]*len(atheism_train) + [-1]*(len(sports_train) + len(politics_train) + len(science_train)) 
@@ -236,7 +238,7 @@ def multiclassify():
     if os.path.isfile('atheism_vs_others.p'):
         theta_atheism, theta0_atheism = pickle.load(open('atheism_vs_others.p', 'rb'))
     else:
-        theta_atheism, theta0_atheism = train(X, y, vocab_size)
+        theta_atheism, theta0_atheism = train(X, y, lamda, ita, vocab_size)
         pickle.dump((theta_atheism, theta0_atheism), open('atheism_vs_others.p', 'wb'))
     print 'Training atheism vs others ended.'
 
@@ -251,7 +253,7 @@ def multiclassify():
     if os.path.isfile('politics_vs_others.p'):
         theta_politics, theta0_politics = pickle.load(open('politics_vs_others.p', 'rb'))
     else:
-        theta_politics, theta0_politics = train(X, y, vocab_size)
+        theta_politics, theta0_politics = train(X, y, lamda, ita, vocab_size)
         pickle.dump((theta_politics, theta0_politics), open('politics_vs_others.p', 'wb'))
     print 'Training politics vs others ended.'
 
@@ -266,7 +268,7 @@ def multiclassify():
     if os.path.isfile('science_vs_others.p'):
         theta_science, theta0_science = pickle.load(open('science_vs_others.p', 'rb'))
     else:
-        theta_science, theta0_science = train(X, y, vocab_size)
+        theta_science, theta0_science = train(X, y, lamda, ita, vocab_size)
         pickle.dump((theta_science, theta0_science), open('science_vs_others.p', 'wb'))
     print 'Training science vs others ended.'
 
@@ -281,7 +283,7 @@ def multiclassify():
     if os.path.isfile('sports_vs_others.p'):
         theta_sports, theta0_sports = pickle.load(open('sports_vs_others.p', 'rb'))
     else:
-        theta_sports, theta0_sports = train(X, y, vocab_size)
+        theta_sports, theta0_sports = train(X, y, lamda, ita, vocab_size)
         pickle.dump((theta_sports, theta0_sports), open('sports_vs_others.p', 'wb'))
     print 'Training sports vs others ended.'
 
@@ -308,8 +310,8 @@ def multiclassify():
 def main():
     start_time = time.time()
 
-    binary_classify()
-    # multiclassify()
+    # binary_classify()
+    multiclassify()
     # binary_classify_regularize()
 
     print '----------' + str(round(time.time() - start_time, 2)) + ' seconds.----------'

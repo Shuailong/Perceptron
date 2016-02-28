@@ -27,7 +27,7 @@ def train(X, y, vocab_size):
     theta0 = 0
 
     # while True:
-    for l in range(100):
+    for l in range(1000):
         count = 0
         for j in range(n):
             x = X[j]
@@ -43,8 +43,8 @@ def train(X, y, vocab_size):
                 theta0 += y[j]
 
         print str(l) + 'th iteration, mislabeled: ' + str(count) + '.'
-        # if count == 0:
-        #     break
+        if count == 0:
+            break
 
     return (theta, theta0)
 
@@ -67,7 +67,7 @@ def train_averaged(X, y, vocab_size):
     c = 1
 
     # while True:
-    for l in range(100):
+    for l in range(1000):
         count = 0
         for j in range(n):
             x = X[j]
@@ -86,8 +86,8 @@ def train_averaged(X, y, vocab_size):
             c += 1
 
         print str(l) + 'th iteration, mislabeled: ' + str(count) + '.'
-        # if count == 0:
-        #     break
+        if count == 0:
+            break
 
     for k in range(len(theta)):
         theta[k] -= u[k]/float(c)
