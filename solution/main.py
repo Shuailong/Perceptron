@@ -124,31 +124,31 @@ def binary_classify():
     print 'Start training...'
 
     # choose train model
-    train = perceptron.train
-    if os.path.isfile('perceptron_model.p'):
-        theta, theta0 = pickle.load(open('perceptron_model.p', 'rb'))
-    else:
-        theta, theta0 = train(X, y, vocab_size)
-        pickle.dump((theta, theta0), open('perceptron_model.p', 'wb'))
+    # train = perceptron.train
+    # if os.path.isfile('perceptron_model.p'):
+    #     theta, theta0 = pickle.load(open('perceptron_model.p', 'rb'))
+    # else:
+    #     theta, theta0 = train(X, y, vocab_size)
+    #     pickle.dump((theta, theta0), open('perceptron_model.p', 'wb'))
 
-    # itas = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]
-    # for ita in itas:
-        # train = gradientdescent.train
-        # theta, theta0 = train(X, y, ita, vocab_size)
-    print 'Training ended.'
+    itas = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]
+    for ita in itas:
+        train = gradientdescent.train
+        theta, theta0 = train(X, y, ita, vocab_size)
+        print 'Training ended.'
 
-    X_test = atheism_test + sports_test
-    y_test = [-1]*len(atheism_test) + [1]*len(sports_test)
+        X_test = atheism_test + sports_test
+        y_test = [-1]*len(atheism_test) + [1]*len(sports_test)
 
-    print 'Start predicting...'
-    predict_train = predict(theta, theta0, X, vocab_size)
-    score_train = score(predict_train, y)
-    predict_test = predict(theta, theta0, X_test, vocab_size)
-    score_test = score(predict_test, y_test)
-    print 'Predicting ended.'
-    # print 'ita: ', ita
-    print 'Train: ', str(round(score_train*100, 2)) + '%'
-    print 'Test: ', str(round(score_test*100, 2)) + '%'
+        print 'Start predicting...'
+        predict_train = predict(theta, theta0, X, vocab_size)
+        score_train = score(predict_train, y)
+        predict_test = predict(theta, theta0, X_test, vocab_size)
+        score_test = score(predict_test, y_test)
+        print 'Predicting ended.'
+        # print 'ita: ', ita
+        print 'Train: ', str(round(score_train*100, 2)) + '%'
+        print 'Test: ', str(round(score_test*100, 2)) + '%'
 
 # part(5)
 def binary_classify_regularize():
@@ -310,8 +310,8 @@ def multiclassify():
 def main():
     start_time = time.time()
 
-    # binary_classify()
-    multiclassify()
+    binary_classify()
+    # multiclassify()
     # binary_classify_regularize()
 
     print '----------' + str(round(time.time() - start_time, 2)) + ' seconds.----------'

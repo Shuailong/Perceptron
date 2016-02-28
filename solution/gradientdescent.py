@@ -13,28 +13,7 @@ Stochastic Gradient Descent algorithm for Assignment 1, part (3,5).
 import os
 import pickle
 from random import randint
-
-def loss(X, y, theta, theta0, vocab_size):
-    '''
-    Hinge loss.
-    X: Feature vectors
-    y: labels, List of Booleans
-    theta, theta0: model params
-    return: loss
-    rtype: float
-    '''
-    loss = 0
-    n = len(X)
-    d = vocab_size
-    for j in range(n):
-        x = X[j]
-        sumation = 0
-        for k in range(d):
-            sumation += x.get(k,0)*theta[k]*y[j]
-        sumation += theta0*y[j]
-
-        loss += max(sumation, 0)
-    return loss/float(n)
+from random import shuffle
 
 # part (5)
 def train_regularize(X, y, lamda, ita, vocab_size):
@@ -57,34 +36,37 @@ def train_regularize(X, y, lamda, ita, vocab_size):
     last_loss = 0
 
     # while True:
-    for l in range(100000):
+    for l in range(100):
         # ita = 1/float(l+1)
-        # ita = 0.001
-        j = randint(0, n-1)
-        x = X[j]
-        sumation = 0
-        for k in range(d):
-            sumation += x.get(k,0)*theta[k]
-        sumation += theta0
+        orders = range(n)
+        shuffle(orders)
+        loss = 0
+        for j in orders: 
+            x = X[j]
 
-        if sumation*y[j] <= 1:
+            sumation = 0
             for k in range(d):
-                theta[k] = (1-2*lamda*ita)*theta[k] + y[j]*x.get(k,0)*ita
-            theta0 = (1-2*lamda*ita)*theta0 + y[j]*ita
+                sumation += x.get(k,0)*theta[k]
+            sumation += theta0
 
-        if l % 1000 == 0:
-            print l, 'loss: ', loss(X, y, theta, theta0, vocab_size)
+            if sumation*y[j] <= 1:
+                for k in range(d):
+                    theta[k] = (1-2*lamda*ita)*theta[k] + y[j]*x.get(k,0)*ita
+                theta0 = (1-2*lamda*ita)*theta0 + y[j]*ita
 
-            lo = loss(X, y, theta, theta0, vocab_size)
-            if lo < best_loss:
-                best_theta = theta
-                best_theta0 = theta0
-                best_loss = lo
-        
-            if last_loss - lo < 0.01 and last_loss - lo >= 0:
-                break
-                
-        last_loss = lo
+            loss += max(sumation, 0)
+
+        print l, 'loss: ', loss
+
+        if loss < best_loss:
+            best_theta = theta
+            best_theta0 = theta0
+            best_loss = loss
+    
+        if last_loss - loss > 0 and last_loss - loss < 0.001:
+            break 
+
+        last_loss = loss
 
     return (theta, theta0)
 
@@ -108,38 +90,42 @@ def train(X, y, ita, vocab_size):
 
     last_loss = 0
 
+    orders = range(n)
     # while True:
-    for l in range(100000):
+    for l in range(100):
         # ita = 1/float(l+1)
-        # ita = 0.001
-        j = randint(0, n-1)
-        x = X[j]
-        sumation = 0
-        for k in range(d):
-            sumation += x.get(k,0)*theta[k]
-        sumation += theta0
+        shuffle(orders)
+        loss = 0
+        for j in orders: 
+            x = X[j]
 
-        if sumation*y[j] <= 1:
+            sumation = 0
             for k in range(d):
-                theta[k] += y[j]*x.get(k,0)*ita
-            theta0 += y[j]*ita
+                sumation += x.get(k,0)*theta[k]
+            sumation += theta0
 
-        if l % 1000 == 0:
-            print l, 'loss: ', loss(X, y, theta, theta0, vocab_size)
+            if sumation*y[j] <= 1:
+                for k in range(d):
+                    theta[k] += y[j]*x.get(k,0)*ita
+                theta0 += y[j]*ita
 
-            lo = loss(X, y, theta, theta0, vocab_size)
-            if lo < best_loss:
-                best_theta = theta
-                best_theta0 = theta0
-                best_loss = lo
-        
-            if last_loss == lo:
-                break
-                
-        last_loss = lo
+            loss += max(sumation, 0)
+        loss /= float(n)
+        print l, 'loss: ', loss
+
+        if loss < best_loss:
+            best_theta = theta
+            best_theta0 = theta0
+            best_loss = loss
+    
+        if last_loss - loss >= 0 and last_loss - loss < 0.001:
+            break 
+
+        last_loss = loss
 
     return (theta, theta0)
-    
+
+
 if __name__ == '__main__':
     pass
     
