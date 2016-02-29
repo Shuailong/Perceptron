@@ -15,65 +15,9 @@ import pickle
 from random import randint
 from random import shuffle
 
-# part (5)
-def train_regularize(X, y, lamda, ita, vocab_size):
+def train(X, y, lamda, ita, vocab_size):
     '''
     Gradient Descent training with regularization term
-    X: Feature vectors
-    y: labels, List of Booleans
-    rtype: List
-    return: theta and theta0
-    '''
-    n = len(X)
-    d = vocab_size
-    theta = [0]*d
-    theta0 = 0
-
-    best_theta = theta
-    best_theta0 = theta0
-    best_loss = float('inf')
-
-    last_loss = 0
-
-    # while True:
-    for l in range(100):
-        # ita = 1/float(l+1)
-        orders = range(n)
-        shuffle(orders)
-        loss = 0
-        for j in orders: 
-            x = X[j]
-
-            sumation = 0
-            for k in range(d):
-                sumation += x.get(k,0)*theta[k]
-            sumation += theta0
-
-            if sumation*y[j] <= 1:
-                for k in range(d):
-                    theta[k] = (1-2*lamda*ita)*theta[k] + y[j]*x.get(k,0)*ita
-                theta0 = (1-2*lamda*ita)*theta0 + y[j]*ita
-
-            loss += max(sumation, 0)
-
-        print l, 'loss: ', loss
-
-        if loss < best_loss:
-            best_theta = theta
-            best_theta0 = theta0
-            best_loss = loss
-    
-        if last_loss - loss > 0 and last_loss - loss < 0.001:
-            break 
-
-        last_loss = loss
-
-    return (theta, theta0)
-
-# part (3)
-def train(X, y, ita, vocab_size):
-    '''
-    Gradient Descent training
     X: Feature vectors
     y: labels, List of Booleans
     rtype: List
@@ -106,7 +50,7 @@ def train(X, y, ita, vocab_size):
 
             if sumation*y[j] <= 1:
                 for k in range(d):
-                    theta[k] += y[j]*x.get(k,0)*ita
+                    theta[k] += (-2*lamda*ita)*theta[k] + y[j]*x.get(k,0)*ita
                 theta0 += y[j]*ita
 
             loss += max(sumation, 0)
@@ -124,7 +68,6 @@ def train(X, y, ita, vocab_size):
         last_loss = loss
 
     return (theta, theta0)
-
 
 if __name__ == '__main__':
     pass

@@ -22,7 +22,7 @@ import featureextractor
 
 BASE_PATH = '../data'
 UNKNOWN_NOTATION = 'UNK'
-get_feature = featureextractor.BoW
+get_feature = featureextractor.tfidf
 
 def get_vocab():
     '''
